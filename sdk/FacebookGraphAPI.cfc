@@ -787,7 +787,7 @@ component extends="FacebookBase" {
 	 * @description Run FQL query and return results.
 	 * @hint 
 	 */
-	public Struct function query(required String query) {
+	public Any function query(required String query) {
 		var httpService = new Http(url="https://graph.facebook.com/fql", timeout=variables.TIMEOUT);
 		var result = {};
 		httpService.addParam(type="url", name="access_token", value=variables.ACCESS_TOKEN);
