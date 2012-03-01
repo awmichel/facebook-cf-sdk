@@ -24,7 +24,7 @@ component accessors="true" extends="FacebookBase" {
      * @description Facebook App Id
 	 * @hint
 	 */
-	property Numeric appId;
+	property String appId;
 	/**
      * @description Facebook application secret key
 	 * @hint 
@@ -38,7 +38,7 @@ component accessors="true" extends="FacebookBase" {
 	 * @description Facebook App constructor
 	 * @hint Requires an appId and its secretKey
 	 */
-	public Any function init(required Numeric appId, required String secretKey) {
+	public Any function init(required String appId, required String secretKey) {
 		if (!isPersistentDataEnabled()) {
 			throw(message="Persistent scope is not available (by default session scope, so you must enable session management for this app)", type="UnvailablePersistentScope");
 		}
@@ -126,6 +126,28 @@ component accessors="true" extends="FacebookBase" {
 		} else {
 			accessToken = getAppId() & '|' & getSecretKey();
 		}
+		return accessToken;
+	}
+	
+	/*
+	 * @description Get page OAuth accessToken
+	 * @hint Requires the manage_pages permission and a userAccessToken
+	 */
+	public String function getPageAccessToken(required String pageId) {
+		var accessToken = "";
+		var httpService = new Http(url="https://graph.facebook.com/#arguments.pageId#/");
+		var result = {};
+		var userAccessToken = getUserAccessToken();
+		
+		httpService.addParam(type="url", name="fields", value="access_token");
+		httpService.addParam(type="url", name="access_token", value=userAccessToken);
+		
+		result = callAPIService(httpService);
+		
+		if (structKeyExists(result, "access_token")) {
+			accessToken = result.access_token;
+		}
+		
 		return accessToken;
 	}
 	
